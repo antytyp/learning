@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Check out the code from the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Miniconda and configure the environment
+      - name: Set up Miniconda
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          python-version: 3.11
+          auto-update-conda: true
+          activate-environment: learning
+          environment-file: environment.yml
+
+      # Step 3: Create and activate the Conda environment (if not already done)
+      - name: Install Conda environment
+        run: conda env create -f environment.yml
+
+      # Step 4: Run your tests or other commands
+      - name: Run tests
+        run: |
+          conda activate learning
+          python -m unittest discover  # Replace with your test command
