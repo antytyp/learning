@@ -3,5 +3,5 @@ channels:
   - conda-forge
 dependencies:
   - python=3.11
-  - pandas==2.2.3
-  - pandera==0.20.4
+  - pandas=2.2.3
+  - pandera=0.20.4
