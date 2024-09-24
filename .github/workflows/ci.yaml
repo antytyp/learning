@@ -26,10 +26,6 @@ jobs:
           activate-environment: learning
           environment-file: environment.yaml
 
-      # Step 3: Install the Conda environment
-      - name: Install Conda environment
-        run: conda env create -f environment.yaml
-
-      # Step 4: Activate the Conda environment (if not activated automatically)
+      # Step 3: Activate the Conda environment (if not activated automatically)
       - name: Activate Conda environment
         run: conda activate learning
