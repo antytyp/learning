@@ -2,6 +2,7 @@ import pandas as pd
 import pandera as pa
 
 from titanic_data_frame_schema import titanic_schema
+from titanic_data_frame_model import TitanicDataFrameModel
 
 TITANIC_SAMPLE_DATA_PATH = '../data/titanic_sample.csv'
 
@@ -15,6 +16,11 @@ def main() -> None:
 
     try:
         titanic_schema.validate(titanic_df)
+    except pa.errors.SchemaError as exc:
+        print(exc)
+
+    try:
+        TitanicDataFrameModel.validate(titanic_df)
     except pa.errors.SchemaError as exc:
         print(exc)
 
