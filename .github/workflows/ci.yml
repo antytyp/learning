@@ -22,10 +22,8 @@ jobs:
           auto-activate-base: false
           python-version: 3.11
           environment-file: environment.yml
-          activate-environment: learning
 
       - name: Run pytest
         run: |
-          conda init
           conda activate learning
           pytest
