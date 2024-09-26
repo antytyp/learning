@@ -19,11 +19,12 @@ jobs:
       - name: Set up Miniconda
         uses: conda-incubator/setup-miniconda@v2
         with:
+          miniconda-version: 'latest'
+          channels: conda-forge
+          auto-update-conda: false
           auto-activate-base: false
-          python-version: 3.11
           environment-file: environment.yml
+          activate-environment: learning
 
       - name: Run pytest
-        run: |
-          conda activate learning
-          pytest
+        run: pytest
