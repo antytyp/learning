@@ -26,5 +26,6 @@ jobs:
 
       - name: Run pytest
         run: |
+          conda init
           conda activate learning
           pytest
