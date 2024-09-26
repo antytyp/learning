@@ -1,14 +1,13 @@
 import pandas as pd
 import pandera as pa
-from pandera import Check, Column, DataFrameSchema
 import pytest
 
 
 class TestPanderaChecks:
 
     def test_check_greater_than(self):
-        schema = DataFrameSchema({
-            "positive_column": Column(float, Check.greater_than(0))
+        schema = pa.DataFrameSchema({
+            "positive_column": pa.Column(float, pa.Check.greater_than(0))
         })
 
         valid_df = pd.DataFrame({
@@ -25,8 +24,8 @@ class TestPanderaChecks:
             schema.validate(invalid_df)
 
     def test_check_in_range(self):
-        schema = DataFrameSchema({
-            "range_column": Column(int, Check.in_range(1, 10))
+        schema = pa.DataFrameSchema({
+            "range_column": pa.Column(int, pa.Check.in_range(1, 10))
         })
 
         valid_df = pd.DataFrame({
