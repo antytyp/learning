@@ -27,4 +27,6 @@ jobs:
           activate-environment: learning
 
       - name: Run pytest
-        run: pytest
+        run: |
+          conda activate learning
+          pytest
