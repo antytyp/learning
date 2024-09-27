@@ -73,3 +73,15 @@ class TestPanderaChecks:
         })
         with pytest.raises(pa.errors.SchemaError):
             invalid_schema.validate(sample_dataframe)
+
+    def test_check_str_matches(self, sample_dataframe):
+        valid_schema = pa.DataFrameSchema({
+            "string_column": pa.Column(str, pa.Check.str_matches(pattern='^[abcd]+$'))
+        })
+        valid_schema.validate(sample_dataframe)
+
+        invalid_schema = pa.DataFrameSchema({
+            "string_column": pa.Column(str, pa.Check.str_matches(pattern='^[ad]+$'))
+        })
+        with pytest.raises(pa.errors.SchemaError):
+            invalid_schema.validate(sample_dataframe)
