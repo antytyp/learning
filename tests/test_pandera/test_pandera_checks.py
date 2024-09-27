@@ -24,20 +24,15 @@ class TestPanderaChecks:
         with pytest.raises(pa.errors.SchemaError):
             invalid_schema.validate(sample_dataframe)
 
-    def test_check_in_range(self):
-        schema = pa.DataFrameSchema({
-            "range_column": pa.Column(int, pa.Check.in_range(1, 10))
+    def test_check_in_range(self, sample_dataframe):
+        valid_schema = pa.DataFrameSchema({
+            "numerical_column": pa.Column(float, pa.Check.in_range(-5.0, 5.0))
         })
+        valid_schema.validate(sample_dataframe)
 
-        valid_df = pd.DataFrame({
-            "range_column": [1, 5, 8, 10]
+        invalid_schema = pa.DataFrameSchema({
+            "numerical_column": pa.Column(float, pa.Check.in_range(-2.0, 2.0))
         })
-
-        invalid_df = pd.DataFrame({
-            "range_column": [0, 11, 5]
-        })
-
-        schema.validate(valid_df)
-
         with pytest.raises(pa.errors.SchemaError):
-            schema.validate(invalid_df)
+            invalid_schema.validate(sample_dataframe)
+
