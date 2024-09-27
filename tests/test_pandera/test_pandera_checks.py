@@ -48,3 +48,15 @@ class TestPanderaChecks:
         })
         with pytest.raises(pa.errors.SchemaError):
             invalid_schema.validate(sample_dataframe)
+
+    def test_isin(self, sample_dataframe):
+        valid_schema = pa.DataFrameSchema({
+            "constant_column": pa.Column(int, pa.Check.isin(allowed_values=[0, 1, 2]))
+        })
+        valid_schema.validate(sample_dataframe)
+
+        invalid_schema = pa.DataFrameSchema({
+            "numerical_column": pa.Column(int, pa.Check.isin(allowed_values=[1.1, 2.5, 3.6]))
+        })
+        with pytest.raises(pa.errors.SchemaError):
+            invalid_schema.validate(sample_dataframe)
