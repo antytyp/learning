@@ -7,6 +7,7 @@ import pytest
 def sample_dataframe():
     return pd.DataFrame({
         'numerical_column': [1.1, 2.5, 3.6, 4.8, 1.1, -2.5, 3.6, 0],
+        'constant_column': [0, 0, 0, 0, 0, 0, 0, 0],
     })
 
 
@@ -36,3 +37,14 @@ class TestPanderaChecks:
         with pytest.raises(pa.errors.SchemaError):
             invalid_schema.validate(sample_dataframe)
 
+    def test_equal_to(self, sample_dataframe):
+        valid_schema = pa.DataFrameSchema({
+            "constant_column": pa.Column(int, pa.Check.equal_to(value=0))
+        })
+        valid_schema.validate(sample_dataframe)
+
+        invalid_schema = pa.DataFrameSchema({
+            "constant_column": pa.Column(int, pa.Check.equal_to(value=5))
+        })
+        with pytest.raises(pa.errors.SchemaError):
+            invalid_schema.validate(sample_dataframe)
