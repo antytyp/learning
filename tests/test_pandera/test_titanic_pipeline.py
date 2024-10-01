@@ -2,7 +2,7 @@ import pandas as pd
 import pandera as pa
 import pytest
 
-TITANIC_SAMPLE_DATA_PATH = '../../data/titanic_sample.csv'
+TITANIC_SAMPLE_DATA_PATH = 'data/titanic_sample.csv'
 
 
 @pytest.fixture(scope="class")
