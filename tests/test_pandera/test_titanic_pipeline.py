@@ -129,3 +129,5 @@ class TestTitanicPipelinePanderaValidation:
             df['IsChild'] = df['Age'].apply(lambda x: 1 if x < 18 else 0)
 
             return df
+
+        _add_new_features(sample_titanic_dataset)
