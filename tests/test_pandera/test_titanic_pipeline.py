@@ -26,6 +26,7 @@ def initial_schema() -> pa.DataFrameSchema:
         "Embarked": pa.Column(str, checks=pa.Check.isin(["C", "Q", "S"]), nullable=True),
     })
 
+
 @pytest.fixture(scope="class")
 def schema_without_missing_values() -> pa.DataFrameSchema:
     return pa.DataFrameSchema({
@@ -63,6 +64,26 @@ def schema_after_encoding() -> pa.DataFrameSchema:
 })
 
 
+@pytest.fixture(scope="class")
+def schema_after_new_features() -> pa.DataFrameSchema:
+    return pa.DataFrameSchema({
+        "PassengerId": pa.Column(int, checks=pa.Check.greater_than_or_equal_to(1), nullable=False),
+        "Survived": pa.Column(int, checks=pa.Check.isin([0, 1]), nullable=False),
+        "Pclass": pa.Column(int, checks=pa.Check.isin([1, 2, 3]), nullable=False),
+        "Name": pa.Column(str, nullable=False),
+        "Sex": pa.Column(str, checks=pa.Check.isin(['male', 'female']), nullable=False),
+        "Age": pa.Column(float, checks=pa.Check.greater_than_or_equal_to(0), nullable=True),
+        "SibSp": pa.Column(int, checks=pa.Check.greater_than_or_equal_to(0), nullable=False),
+        "Parch": pa.Column(int, checks=pa.Check.greater_than_or_equal_to(0), nullable=False),
+        "Ticket": pa.Column(str, nullable=False),
+        "Fare": pa.Column(float, checks=pa.Check.greater_than_or_equal_to(0), nullable=False),
+        "Cabin": pa.Column(str, nullable=True),
+        "Embarked": pa.Column(str, checks=pa.Check.isin(["C", "Q", "S"]), nullable=True),
+        "FamilySize": pa.Column(int, checks=pa.Check.greater_than_or_equal_to(1), nullable=False),
+        "IsChild": pa.Column(int, checks=pa.Check.isin([0, 1]), nullable=False),
+    })
+
+
 class TestTitanicPipelinePanderaValidation:
 
     def test_handle_missing_values(self, sample_titanic_dataset, initial_schema, schema_without_missing_values):
@@ -97,3 +118,16 @@ class TestTitanicPipelinePanderaValidation:
             return df
 
         _encode_categorical_columns(sample_titanic_dataset)
+
+    def test_new_features(self, sample_titanic_dataset, initial_schema, schema_after_new_features):
+
+        @pa.check_input(initial_schema)
+        @pa.check_output(schema_after_new_features)
+        def _add_new_features(df: pd.DataFrame) -> pd.DataFrame:
+            df['FamilySize'] = df['SibSp'] + df['Parch'] + 1
+
+            df['IsChild'] = df['Age'].apply(lambda x: 1 if x < 18 else 0)
+
+            return df
+
+        _add_new_features(sample_titanic_dataset)
