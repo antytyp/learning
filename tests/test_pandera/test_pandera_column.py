@@ -20,7 +20,20 @@ class TestPanderaColumn:
             _ = invalid_schema.validate(df)
 
     def test_column_checks(self):
-        pass
+        df = pd.DataFrame({
+            "A": [5, 10, 15],
+        })
+        valid_check = pa.Check(check_fn=lambda x: x % 5 == 0)
+        pa_column_valid_check = pa.Column(checks=valid_check)
+        valid_schema = pa.DataFrameSchema({"A": pa_column_valid_check})
+        _ = valid_schema.validate(df)
+
+        invalid_check = pa.Check(check_fn=lambda x: x % 5 == 1)
+        pa_column_invalid_check = pa.Column(checks=invalid_check)
+        invalid_schema = pa.DataFrameSchema({"A": pa_column_invalid_check})
+        with pytest.raises(pa.errors.SchemaError):
+            _ = invalid_schema.validate(df)
+
 
     def test_column_parsers(self):
         pass
