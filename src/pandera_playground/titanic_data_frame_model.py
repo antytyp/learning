@@ -2,34 +2,36 @@ import pandera as pa
 from pandera.typing import Series
 
 # pa.Field arguments explained:
-# eq: Optional[Any] = None, - TODO
-# ne: Optional[Any] = None, - TODO
-# gt: Optional[Any] = None, - TODO
-# ge: Optional[Any] = None, - TODO
-# lt: Optional[Any] = None, - TODO
-# le: Optional[Any] = None, - TODO
-# in_range: Optional[Dict[str, Any]] = None, - TODO
-# isin: Optional[Iterable] = None, - TODO
-# notin: Optional[Iterable] = None, - TODO
-# str_contains: Optional[str] = None, - TODO
-# str_endswith: Optional[str] = None, - TODO
-# str_length: Optional[Dict[str, Any]] = None, - TODO
-# str_matches: Optional[str] = None, - TODO
-# str_startswith: Optional[str] = None, - TODO
-# nullable: bool = False, - TODO
-# unique: bool = False, - TODO
-# coerce: bool = False, - TODO
-# regex: bool = False, - TODO
-# ignore_na: bool = True, - TODO
-# raise_warning: bool = False, - TODO
-# n_failure_cases: Optional[int] = None, - TODO
-# alias: Optional[Any] = None, - TODO
-# check_name: Optional[bool] = None, - TODO
-# dtype_kwargs: Optional[Dict[str, Any]] = None, - TODO
-# title: Optional[str] = None, - TODO
-# description: Optional[str] = None, - TODO
-# default: Optional[Any] = None, - TODO
-# metadata: Optional[dict] = None, - TODO
+# -> eq - whether column values are equal to given value.
+# -> ne - whether column values are not equal to given value.
+# -> gt - whether column values are greater than given value.
+# -> ge - whether column values are greater than or equal to given value.
+# -> lt - whether column values are lower than given value.
+# -> le - whether column values are lower than or equal to given value.
+# -> in_range - whether column values belong to given range.
+# -> isin - whether column values belong to given collection.
+# -> notin - whether column values do not belong to given collection.
+# -> str_contains - whether column string values contain given value.
+# -> str_endswith - whether column string values end with given value.
+# -> str_length - whether column string values have given length.
+# -> str_matches - whether column string values match given regex.
+# -> str_startswith - whether column string values start with given value.
+# -> nullable - whether or not the column/index can contain null values.
+# -> unique - whether column values should be unique.
+# -> coerce - coerces the data type if True.
+# -> regex - whether or not the field name or alias is a regex pattern.
+# -> ignore_na - whether or not to ignore null values in the checks.
+# -> raise_warning - raise a warning instead of an Exception.
+# -> n_failure_cases - report the first n unique failure cases. If None, report all failure cases.
+# -> alias - the public name of the column/index.
+# -> check_name - whether to check the name of the column/index during validation. None is the default behavior, which
+# translates to True for columns and multi-index, and to False for a single index.
+# -> dtype_kwargs - the parameters to be forwarded to the type of the field.
+# -> title - a human-readable label for the field.
+# -> description - an arbitrary textual description of the field.
+# -> default - optional default value of the field.
+# -> metadata - an optional key-value data.
+# -> kwargs - specify custom checks that have been registered with the register_check_method decorator.
 
 
 class TitanicDataFrameModel(pa.DataFrameModel):
