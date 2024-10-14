@@ -23,6 +23,7 @@ class TestPanderaColumn:
         df = pd.DataFrame({
             "A": [5, 10, 15],
         })
+
         valid_check = pa.Check(check_fn=lambda x: x % 5 == 0)
         pa_column_valid_check = pa.Column(checks=valid_check)
         valid_schema = pa.DataFrameSchema({"A": pa_column_valid_check})
