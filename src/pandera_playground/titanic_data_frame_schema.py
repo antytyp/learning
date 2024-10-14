@@ -28,21 +28,24 @@ import pandera as pa
 # -> drop_invalid_rows - if True, drop invalid rows on validation.
 
 # pa.Column arguments explained:
-# dtype: PandasDtypeInputTypes = None, - specifies the data type
-# checks: Optional[CheckList] = None, - defines validation rules
-# parsers: Optional[ParserList] = None, - TODO
-# nullable: bool = False, - allows or disallows NaN values
-# unique: bool = False, - ensures uniqueness of values
-# report_duplicates: UniqueSettings = "all", - TODO
-# coerce: bool = False, - automatically converts values to the specified type
-# required: bool = True, - makes the column mandatory or optional
-# name: Union[str, Tuple[str, ...], None] = None, - TODO
-# regex: bool = False, - matches column names with regex
-# title: Optional[str] = None, - TODO
-# description: Optional[str] = None, - TODO
-# default: Optional[Any] = None, - TODO
-# metadata: Optional[dict] = None, - TODO
-# drop_invalid_rows: bool = False, - TODO
+# -> dtype - datatype of the column. The datatype for type-checking a dataframe. If a string is specified, then assumes
+# one of the valid pandas string values: http://pandas.pydata.org/pandas-docs/stable/basics.html#dtypes.
+# -> checks - checks to verify validity of the column.
+# -> parsers - parsers to verify validity of the column.
+# -> nullable - whether or not column can contain null values.
+# -> unique - whether column values should be unique.
+# -> report_duplicates - how to report unique errors - exclude_first: report all duplicates except first occurence -
+# exclude_last: report all duplicates except last occurence - all: (default) report all duplicates.
+# -> coerce - if True, when schema.validate is called the column will be coerced into the specified dtype. This has no
+# effect on columns where dtype=None.
+# -> required - whether or not column is allowed to be missing
+# -> name - column name in dataframe to validate.
+# -> regex - whether the name attribute should be treated as a regex pattern to apply to multiple columns in a dataframe.
+# -> title - a human-readable label for the column.
+# -> description - an arbitrary textual description of the column.
+# -> default - the default value for missing values in the column.
+# -> metadata - an optional key value data.
+# -> drop_invalid_rows - if True, drop invalid rows on validation.
 
 # pa.Check arguments explained:
 # check_fn: Callable, - TODO
