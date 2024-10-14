@@ -48,20 +48,28 @@ import pandera as pa
 # -> drop_invalid_rows - if True, drop invalid rows on validation.
 
 # pa.Check arguments explained:
-# check_fn: Callable, - TODO
-# groups: Optional[Union[str, List[str]]] = None, - TODO
-# groupby: Optional[Union[str, List[str], Callable]] = None, - TODO
-# ignore_na: bool = True, - TODO
-# element_wise: bool = False, - TODO
-# name: Optional[str] = None, - TODO
-# error: Optional[str] = None, - TODO
-# raise_warning: bool = False, - TODO
-# n_failure_cases: Optional[int] = None, - TODO
-# title: Optional[str] = None, - TODO
-# description: Optional[str] = None, - TODO
-# statistics: Optional[Dict[str, Any]] = None, - TODO
-# strategy: Optional[Any] = None, - TODO
-# ** check_kwargs, - TODO
+# -> check_fn - a function to check data object. For Column or SeriesSchema checks, if element_wise is True, this
+# function should have the signature: Callable[[pd.Series], Union[pd.Series, bool]], where the output series is a
+# boolean vector.
+# -> groups - the dict input to the fn callable will be constrained to the groups specified by groups.
+# -> groupby - if a string or list of strings is provided, these columns are used to group the Column series. If a
+# callable is passed, the expected signature is: Callable[ [pd.DataFrame], pd.core.groupby.DataFrameGroupBy].
+# -> ignore_na - if True, null values will be ignored when determining if a check passed or failed. For dataframes,
+# ignores rows with any null value.
+# -> element_wise - whether or not to apply validator in an element-wise fashion. If bool, assumes that all checks
+# should be applied to the column element-wise. If list, should be the same number of elements as checks.
+# -> name - optional name for the check.
+# -> error - custom error message if series fails validation check.
+# -> raise_warning - if True, raise a SchemaWarning and do not throw exception instead of raising a SchemaError for a
+# specific check. This option should be used carefully in cases where a failing check is informational and shouldn’t
+# stop execution of the program.
+# -> n_failure_cases - report the first n unique failure cases. If None, report all failure cases.
+# -> title - a human-readable label for the check.
+# -> description - an arbitrary textual description of the check.
+# -> statistics - kwargs to pass into the check function. These values are serialized and represent the constraints
+# of the checks.
+# -> strategy - a hypothesis strategy, used for implementing data synthesis strategies for this check.
+# -> ** check_kwargs - key-word arguments to pass into check_fn.
 
 
 titanic_schema = pa.DataFrameSchema(
