@@ -37,7 +37,21 @@ class TestPanderaColumn:
 
 
     def test_column_parsers(self):
-        pass
+        # Purpose: The parsers argument is a dictionary that allows you to customize the parsing of inputs before
+        # they are passed to your check function. This can be useful when you need to manipulate or extract certain
+        # aspects of the data before applying the check.
+        df = pd.DataFrame({
+            "A": ["a", "B", "b", "c"],
+        })
+
+        def my_custom_check(series):
+            return series.is_unique
+
+        valid_check = pa.Check(check_fn=my_custom_check)
+        pa_column_valid_check = pa.Column(checks=valid_check, parsers=pa.Parser(lambda x: x.str.lower()))
+        valid_schema = pa.DataFrameSchema({"A": pa_column_valid_check})
+        with pytest.raises(pa.errors.SchemaError):
+            _ = valid_schema.validate(df)
 
     def test_column_nullable(self):
         pass
