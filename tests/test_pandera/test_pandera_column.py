@@ -6,52 +6,57 @@ import pytest
 class TestPanderaColumn:
 
     def test_column_dtype(self):
-        df = pd.DataFrame({
+        column_validator = pa.Column(dtype="str")
+        schema = pa.DataFrameSchema({"A": column_validator})
+
+        valid_df = pd.DataFrame({
             "A": ["a", "b", "c"],
         })
+        _ = schema.validate(valid_df)
 
-        pa_column_valid_check = pa.Column(dtype="str")
-        valid_schema = pa.DataFrameSchema({"A": pa_column_valid_check})
-        _ = valid_schema.validate(df)
-
-        pa_column_invalid_check = pa.Column(dtype="int")
-        invalid_schema = pa.DataFrameSchema({"A": pa_column_invalid_check})
+        invalid_df = pd.DataFrame({
+            "A": [1, 2, 3],
+        })
         with pytest.raises(pa.errors.SchemaError):
-            _ = invalid_schema.validate(df)
+            _ = schema.validate(invalid_df)
 
     def test_column_checks(self):
-        df = pd.DataFrame({
+        column_validator = pa.Column(
+            checks=pa.Check(check_fn=lambda x: x % 5 == 0)
+        )
+        schema = pa.DataFrameSchema({"A": column_validator})
+
+        valid_df = pd.DataFrame({
             "A": [5, 10, 15],
         })
+        _ = schema.validate(valid_df)
 
-        valid_check = pa.Check(check_fn=lambda x: x % 5 == 0)
-        pa_column_valid_check = pa.Column(checks=valid_check)
-        valid_schema = pa.DataFrameSchema({"A": pa_column_valid_check})
-        _ = valid_schema.validate(df)
-
-        invalid_check = pa.Check(check_fn=lambda x: x % 5 == 1)
-        pa_column_invalid_check = pa.Column(checks=invalid_check)
-        invalid_schema = pa.DataFrameSchema({"A": pa_column_invalid_check})
+        invalid_df = pd.DataFrame({
+            "A": [5, 11, 15],
+        })
         with pytest.raises(pa.errors.SchemaError):
-            _ = invalid_schema.validate(df)
-
+            _ = schema.validate(invalid_df)
 
     def test_column_parsers(self):
         # Purpose: The parsers argument is a dictionary that allows you to customize the parsing of inputs before
         # they are passed to your check function. This can be useful when you need to manipulate or extract certain
         # aspects of the data before applying the check.
-        df = pd.DataFrame({
-            "A": ["a", "B", "b", "c"],
+        column_validator = pa.Column(
+            checks=pa.Check(check_fn=lambda series: series.is_unique),
+            parsers=pa.Parser(lambda x: x.str.lower())
+        )
+        schema = pa.DataFrameSchema({"A": column_validator})
+
+        valid_df = pd.DataFrame({
+            "A": ["a", "B", "c"],
         })
+        _ = schema.validate(valid_df)
 
-        def my_custom_check(series):
-            return series.is_unique
-
-        valid_check = pa.Check(check_fn=my_custom_check)
-        pa_column_valid_check = pa.Column(checks=valid_check, parsers=pa.Parser(lambda x: x.str.lower()))
-        valid_schema = pa.DataFrameSchema({"A": pa_column_valid_check})
+        invalid_df = pd.DataFrame({
+            "A": ["a", "B", "b"],
+        })
         with pytest.raises(pa.errors.SchemaError):
-            _ = valid_schema.validate(df)
+            _ = schema.validate(invalid_df)
 
     def test_column_nullable(self):
         pass
