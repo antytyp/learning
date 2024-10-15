@@ -27,26 +27,6 @@ import pandera as pa
 # -> metadata - an optional key-value data.
 # -> drop_invalid_rows - if True, drop invalid rows on validation.
 
-# pa.Column arguments explained:
-# -> dtype - datatype of the column. The datatype for type-checking a dataframe. If a string is specified, then assumes
-# one of the valid pandas string values: http://pandas.pydata.org/pandas-docs/stable/basics.html#dtypes.
-# -> checks - checks to verify validity of the column.
-# -> parsers - parsers to verify validity of the column.
-# -> nullable - whether or not column can contain null values.
-# -> unique - whether column values should be unique.
-# -> report_duplicates - how to report unique errors - exclude_first: report all duplicates except first occurence -
-# exclude_last: report all duplicates except last occurence - all: (default) report all duplicates.
-# -> coerce - if True, when schema.validate is called the column will be coerced into the specified dtype. This has no
-# effect on columns where dtype=None.
-# -> required - whether or not column is allowed to be missing
-# -> name - column name in dataframe to validate.
-# -> regex - whether the name attribute should be treated as a regex pattern to apply to multiple columns in a dataframe.
-# -> title - a human-readable label for the column.
-# -> description - an arbitrary textual description of the column.
-# -> default - the default value for missing values in the column.
-# -> metadata - an optional key value data.
-# -> drop_invalid_rows - if True, drop invalid rows on validation.
-
 # pa.Check arguments explained:
 # -> check_fn - a function to check data object. For Column or SeriesSchema checks, if element_wise is True, this
 # function should have the signature: Callable[[pd.Series], Union[pd.Series, bool]], where the output series is a

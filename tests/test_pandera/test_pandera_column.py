@@ -6,6 +6,8 @@ import pytest
 class TestPanderaColumn:
 
     def test_column_dtype(self):
+        # dtype - datatype of the column. The datatype for type-checking a dataframe. If a string is specified, then
+        # assumes one of the valid pandas string values: http://pandas.pydata.org/pandas-docs/stable/basics.html#dtypes.
         column_validator = pa.Column(dtype="str")
         schema = pa.DataFrameSchema({"A": column_validator})
 
@@ -21,6 +23,7 @@ class TestPanderaColumn:
             _ = schema.validate(invalid_df)
 
     def test_column_checks(self):
+        # checks - checks to verify validity of the column.
         column_validator = pa.Column(
             checks=pa.Check(check_fn=lambda x: x % 5 == 0)
         )
@@ -38,6 +41,7 @@ class TestPanderaColumn:
             _ = schema.validate(invalid_df)
 
     def test_column_parsers(self):
+        # parsers - parsers to verify validity of the column.
         # Purpose: The parsers argument is a dictionary that allows you to customize the parsing of inputs before
         # they are passed to your check function. This can be useful when you need to manipulate or extract certain
         # aspects of the data before applying the check.
@@ -59,6 +63,7 @@ class TestPanderaColumn:
             _ = schema.validate(invalid_df)
 
     def test_column_nullable(self):
+        # nullable - whether or not column can contain null values.
         column_validator = pa.Column(
             nullable=False,
         )
@@ -76,6 +81,7 @@ class TestPanderaColumn:
             _ = schema.validate(invalid_df)
 
     def test_column_unique(self):
+        # unique - whether column values should be unique.
         column_validator = pa.Column(
             unique=True,
         )
@@ -93,12 +99,16 @@ class TestPanderaColumn:
             _ = schema.validate(invalid_df)
 
     def test_column_report_duplicates(self):
+        # report_duplicates - how to report unique errors - exclude_first: report all duplicates except first occurence -
+        # exclude_last: report all duplicates except last occurence - all: (default) report all duplicates.
         # (Union[Literal[‘exclude_first’], Literal[‘exclude_last’], Literal[‘all’]]) – how to report unique errors -
         # exclude_first: report all duplicates except first occurence - exclude_last: report all duplicates except
-        # last occurence - all: (default) report all duplicates
+        # last occurence - all: (default) report all duplicates.
         pass
 
     def test_column_coerce(self):
+        # coerce - if True, when schema.validate is called the column will be coerced into the specified dtype.
+        # This has no effect on columns where dtype=None.
         column_validator = pa.Column(
             dtype=int,
             coerce=True,
@@ -113,6 +123,7 @@ class TestPanderaColumn:
         assert validated_df["A"].dtype == 'int64'
 
     def test_column_required(self):
+        # required - whether or not column is allowed to be missing.
         column_validator = pa.Column(
             required=True,
         )
@@ -132,6 +143,7 @@ class TestPanderaColumn:
             _ = schema.validate(invalid_df)
 
     def test_column_name(self):
+        # name - column name in dataframe to validate.
         column_validator = pa.Column(
             unique=True,
             name="A",
@@ -151,6 +163,7 @@ class TestPanderaColumn:
             _ = column_validator.validate(invalid_df)
 
     def test_column_regex(self):
+        # regex - whether the name attribute should be treated as a regex pattern to apply to multiple columns in a dataframe.
         column_validator = pa.Column(
             unique=True,
             name="A.+",
@@ -176,16 +189,19 @@ class TestPanderaColumn:
             _ = column_validator.validate(invalid_df2)
 
     def test_column_title(self):
+        # title - a human-readable label for the column.
         schema = pa.DataFrameSchema({
             "salary": pa.Column(title="Annual Salary"),
         })
 
     def test_column_description(self):
+        # description - an arbitrary textual description of the column.
         schema = pa.DataFrameSchema({
             "age": pa.Column(description="The age of the individual in full years."),
         })
 
     def test_column_default(self):
+        # default - the default value for missing values in the column.
         column_validator = pa.Column(
             default=0.0,
         )
@@ -204,6 +220,7 @@ class TestPanderaColumn:
         )
 
     def test_column_metadata(self):
+        # metadata - an optional key value data.
         metadata = {
             "source": "user-input",
             "privacy_level": "non-sensitive",
@@ -216,6 +233,7 @@ class TestPanderaColumn:
         assert schema.columns["age"].metadata == metadata
 
     def test_column_drop_invalid_rows(self):
+        # drop_invalid_rows - if True, drop invalid rows on validation.
         column_validator = pa.Column(
             name="A",
             drop_invalid_rows=True,
