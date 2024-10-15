@@ -96,7 +96,6 @@ class TestPanderaColumn:
         # (Union[Literal[‘exclude_first’], Literal[‘exclude_last’], Literal[‘all’]]) – how to report unique errors -
         # exclude_first: report all duplicates except first occurence - exclude_last: report all duplicates except
         # last occurence - all: (default) report all duplicates
-        # TODO
         pass
 
     def test_column_coerce(self):
@@ -134,71 +133,57 @@ class TestPanderaColumn:
 
     def test_column_name(self):
         column_validator = pa.Column(
-            name=None,
+            unique=True,
+            name="A",
         )
-        schema = pa.DataFrameSchema({"A": column_validator})
 
         valid_df = pd.DataFrame({
-            "A": [],
+            "A": [1, 2, 3],
+            "B": [1, 3, 3]
         })
-        _ = schema.validate(valid_df)
+        _ = column_validator.validate(valid_df)
 
         invalid_df = pd.DataFrame({
-            "A": [],
+            "A": [1, 2, 2],
+            "B": [1, 3, 3]
         })
         with pytest.raises(pa.errors.SchemaError):
-            _ = schema.validate(invalid_df)
+            _ = column_validator.validate(invalid_df)
 
     def test_column_regex(self):
         column_validator = pa.Column(
-            regex=None,
+            unique=True,
+            name="A.+",
+            regex=True,
         )
-        schema = pa.DataFrameSchema({"A": column_validator})
-
         valid_df = pd.DataFrame({
-            "A": [],
+            "A1": [1, 2, 3],
+            "A2": [1, 2, 3],
+            "B": [1, 3, 3]
         })
-        _ = schema.validate(valid_df)
+        _ = column_validator.validate(valid_df)
 
-        invalid_df = pd.DataFrame({
-            "A": [],
+        invalid_df1 = pd.DataFrame({
+            "A1": [1, 2, 2],
+            "B": [1, 3, 3]
+        })
+        invalid_df2 = pd.DataFrame({
+            "A2": [1, 1, 2],
+            "B": [1, 3, 3]
         })
         with pytest.raises(pa.errors.SchemaError):
-            _ = schema.validate(invalid_df)
+            _ = column_validator.validate(invalid_df1)
+            _ = column_validator.validate(invalid_df2)
 
     def test_column_title(self):
-        column_validator = pa.Column(
-            title=None,
-        )
-        schema = pa.DataFrameSchema({"A": column_validator})
-
-        valid_df = pd.DataFrame({
-            "A": [],
+        schema = pa.DataFrameSchema({
+            "salary": pa.Column(title="Annual Salary"),
         })
-        _ = schema.validate(valid_df)
-
-        invalid_df = pd.DataFrame({
-            "A": [],
-        })
-        with pytest.raises(pa.errors.SchemaError):
-            _ = schema.validate(invalid_df)
 
     def test_column_description(self):
-        column_validator = pa.Column(
-            description=None,
-        )
-        schema = pa.DataFrameSchema({"A": column_validator})
-
-        valid_df = pd.DataFrame({
-            "A": [],
+        schema = pa.DataFrameSchema({
+            "age": pa.Column(description="The age of the individual in full years."),
         })
-        _ = schema.validate(valid_df)
-
-        invalid_df = pd.DataFrame({
-            "A": [],
-        })
-        with pytest.raises(pa.errors.SchemaError):
-            _ = schema.validate(invalid_df)
 
     def test_column_default(self):
         column_validator = pa.Column(
@@ -210,24 +195,25 @@ class TestPanderaColumn:
             "A": [1.0, None, 3.0],
         })
         validated_df = schema.validate(df)
-        assert validated_df["A"].notna().all()
+        expected_validated_df = pd.DataFrame({
+            "A": [1.0, 0.0, 3.0],
+        })
+        pd.testing.assert_frame_equal(
+            validated_df,
+            expected_validated_df,
+        )
 
     def test_column_metadata(self):
+        metadata = {
+            "source": "user-input",
+            "privacy_level": "non-sensitive",
+            "to_be_normalized": False
+        }
         column_validator = pa.Column(
-            metadata=None,
+            metadata=metadata
         )
-        schema = pa.DataFrameSchema({"A": column_validator})
-
-        valid_df = pd.DataFrame({
-            "A": [],
-        })
-        _ = schema.validate(valid_df)
-
-        invalid_df = pd.DataFrame({
-            "A": [],
-        })
-        with pytest.raises(pa.errors.SchemaError):
-            _ = schema.validate(invalid_df)
+        schema = pa.DataFrameSchema({"age": column_validator})
+        assert schema.columns["age"].metadata == metadata
 
     def test_column_drop_invalid_rows(self):
         column_validator = pa.Column(
